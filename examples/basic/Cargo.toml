@@ -6,7 +6,8 @@ license = "MIT"
 edition = "2021"
 
 [dependencies]
-egui_graphs = { path = "../../" }
-egui = "0.25.0"
-eframe = "0.25.0"
+egui_graphs = { path = "../../", features=["egui_persistence"] }
+egui = {git = "https://github.com/emilk/egui", features=["persistence"]}
+eframe = {git = "https://github.com/emilk/egui"}
 petgraph = "0.6"
+wgpu = { version = "0.19.1", features = ["fragile-send-sync-non-atomic-wasm", "dx12", "metal", "wgsl"] }

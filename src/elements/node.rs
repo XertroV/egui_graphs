@@ -59,9 +59,8 @@ where
     D: DisplayNode<N, E, Ty, Ix>,
 {
     fn clone(&self) -> Self {
-        let idx = self.id().index();
         Self {
-            id: Some(NodeIndex::new(idx)),
+            id: self.id.clone(),
             props: self.props.clone(),
             display: self.display.clone(),
             _marker: PhantomData,
@@ -117,7 +116,10 @@ where
 
     // TODO: handle unbinded node
     pub fn id(&self) -> NodeIndex<Ix> {
-        self.id.unwrap()
+        match self.id {
+            Some(id) => id,
+            None => NodeIndex::new(0),
+        }
     }
 
     pub fn payload(&self) -> &N {
