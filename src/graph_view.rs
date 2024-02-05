@@ -326,8 +326,10 @@ where
         }
 
         if resp.drag_started() {
-            if let Some(idx) = self.g.node_by_screen_pos(meta, resp.hover_pos().unwrap()) {
-                self.set_drag_start(idx);
+            if let Some(pos) = resp.hover_pos() {
+                if let Some(idx) = self.g.node_by_screen_pos(meta, pos) {
+                    self.set_drag_start(idx);
+                }
             }
         }
 
