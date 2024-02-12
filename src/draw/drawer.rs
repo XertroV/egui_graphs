@@ -58,8 +58,21 @@ where
     }
 
     pub fn draw(mut self) {
+        // self.update_nodes();
         self.draw_edges();
         self.fill_layers_nodes();
+    }
+
+    fn update_nodes(&mut self) {
+        self.g
+            .g
+            .node_indices()
+            .collect::<Vec<_>>()
+            .into_iter()
+            .for_each(|idx| {
+                let n = self.g.node_mut(idx).unwrap();
+                n.update_display_from_props();
+            });
     }
 
     fn fill_layers_nodes(&mut self) {
@@ -70,10 +83,8 @@ where
             .into_iter()
             .for_each(|idx| {
                 let n = self.g.node_mut(idx).unwrap();
-                let props = n.props().clone();
-
+                n.update_display_from_props();
                 let display = n.display_mut();
-                display.update(&props);
                 let shapes = display.shapes(self.ctx);
 
                 if n.selected() || n.dragged() {
@@ -96,7 +107,6 @@ where
             .into_iter()
             .for_each(|idx| {
                 let (idx_start, idx_end) = self.g.edge_endpoints(idx).unwrap();
-
                 // FIXME: not a good decision to clone nodes for every edge
                 let start = self.g.node(idx_start).cloned().unwrap();
                 let end = self.g.node(idx_end).cloned().unwrap();
