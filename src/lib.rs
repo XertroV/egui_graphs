@@ -14,7 +14,7 @@ pub use metadata::Metadata;
 pub use settings::{SettingsInteraction, SettingsNavigation, SettingsStyle};
 pub use transform::{
     add_edge, add_edge_custom, add_node, add_node_custom, default_edge_transform,
-    default_node_transform, to_graph, to_graph_custom,
+    default_node_transform, remove_edges, remove_node, to_graph, to_graph_custom,
 };
 
 #[cfg(feature = "events")]

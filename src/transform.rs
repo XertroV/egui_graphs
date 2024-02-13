@@ -3,7 +3,7 @@ use egui::Pos2;
 use petgraph::{
     graph::IndexType,
     stable_graph::{EdgeIndex, NodeIndex, StableGraph},
-    visit::IntoNodeReferences,
+    visit::{EdgeRef, IntoNodeReferences},
     EdgeType,
 };
 use rand::Rng;
@@ -86,6 +86,46 @@ pub fn add_edge_custom<
         edge_transform(EdgeIndex::<Ix>::new(g.g.edge_count() + 1), e, order),
     )
 }
+
+/// Helper function which removes user's node (and connected edges) from the [`super::Graph`] instance.
+pub fn remove_node<
+    N: Clone,
+    E: Clone,
+    Ty: EdgeType,
+    Ix: IndexType,
+    Dn: DisplayNode<N, E, Ty, Ix>,
+    De: DisplayEdge<N, E, Ty, Ix, Dn>,
+>(
+    g: &mut Graph<N, E, Ty, Ix, Dn, De>,
+    idx: NodeIndex<Ix>,
+) -> Option<N> {
+    // before removing nodes we need to remove all edges connected to it
+    let neighbors = g.g.neighbors_undirected(idx).collect::<Vec<_>>();
+    for n in &neighbors {
+        remove_edges(g, idx, *n);
+        remove_edges(g, *n, idx);
+    }
+    g.g.remove_node(idx).map(|n| n.payload().clone())
+}
+
+
+/// Helper function which removes user's edges from the [`super::Graph`] instance.
+pub fn remove_edges<
+    N: Clone,
+    E: Clone,
+    Ty: EdgeType,
+    Ix: IndexType,
+    Dn: DisplayNode<N, E, Ty, Ix>,
+    De: DisplayEdge<N, E, Ty, Ix, Dn>,
+>(
+    g: &mut Graph<N, E, Ty, Ix, Dn, De>,
+    start: NodeIndex<Ix>,
+    end: NodeIndex<Ix>,
+) -> Vec<E> {
+    let edges = g.g.edges_connecting(start, end).map(|e| e.id()).collect::<Vec<_>>();
+    edges.iter().map(|e| g.g.remove_edge(*e).unwrap().payload().clone()).collect::<Vec<_>>()
+}
+
 
 /// Helper function which transforms users [`petgraph::stable_graph::StableGraph`] isntance into the version required by the [`super::GraphView`] widget.
 ///
