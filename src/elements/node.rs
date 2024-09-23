@@ -115,7 +115,7 @@ where
     }
 
     /// Binds node to the actual node and position in the graph.
-    pub(crate) fn bind(&mut self, id: NodeIndex<Ix>, location: Pos2) {
+    pub fn bind(&mut self, id: NodeIndex<Ix>, location: Pos2) {
         self.id = Some(id);
         self.props.location = location;
     }
